@@ -19,6 +19,7 @@ namespace GoonsOnAir.Modules.Shell.ViewModels
         public DownloadFboMissionsViewModel DownloadFboMissionsViewModel { get; set; }
         public DownloadFavoritesViewModel DownloadFavoritesViewModel { get; set; }
         public DownloadPendingViewModel DownloadPendingViewModel { get; set; }
+        public RefreshFboQueriesViewModel RefreshFboQueriesViewModel { get; set; }
 
         protected override async Task OnActivateAsync(CancellationToken cancellationToken)
         {
@@ -39,6 +40,11 @@ namespace GoonsOnAir.Modules.Shell.ViewModels
         public async Task SwitchToDownloadPending()
         {
             await ActivateItemAsync(DownloadPendingViewModel, CancellationToken.None);
+        }
+
+        public async Task SwitchToRefreshFboQueries()
+        {
+            await ActivateItemAsync(RefreshFboQueriesViewModel, CancellationToken.None);
         }
 
         public Task HandleAsync(StatusMessageEvent message, CancellationToken cancellationToken)

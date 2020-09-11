@@ -15,6 +15,7 @@ namespace GoonsOnAir.Services
         public Task DownloadFboMissions(string outputFolder);
         public Task DownloadPendingMissions(string outputFolder);
         public Task DownloadFavoriteMissions(string outputFolder);
+        public Task RefreshFboQueries();
     }
 
     public class FboService : IFboService
@@ -314,6 +315,34 @@ namespace GoonsOnAir.Services
             }
             worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
             await package.SaveAsync();
+        }
+
+        public async Task RefreshFboQueries()
+        {
+            await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company) => {
+                var companyFbOsResponse = await client.GetCompanyFBOsAsync(company.Id);
+                foreach (var fbo in companyFbOsResponse.Body.GetCompanyFBOsResult)
+                {
+                    var logisticQueriesResponse = await client.GetFBOLogisticQueriesAsync(ap, company.Id, fbo.Id);
+                    foreach (var q in logisticQueriesResponse.Body.GetFBOLogisticQueriesResult.OrderBy(x => x.Order))
+                    {
+                        if (!q.CanGenerateMissions)
+                        {
+                            continue;
+                        }
+
+                        var missionsResponse = await client.FBOLogisticQueryGetMissionsAsync(ap, company.Id, q.Id);
+                        var currentMissions = missionsResponse.Body.FBOLogisticQueryGetMissionsResult;
+
+                        if (currentMissions.Any(x => x.IsFavorited))
+                        {
+                            continue;
+                        }
+
+                        await client.FBOLogisticQueryGenerateMissionsAsync(ap, company.Id, q.Id);
+                    }
+                }
+            });
         }
 
         private string MissionExpiresDelta(DateTime? expirationDate)

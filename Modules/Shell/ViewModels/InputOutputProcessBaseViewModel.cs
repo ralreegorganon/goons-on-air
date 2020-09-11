@@ -8,15 +8,11 @@ using Screen = Caliburn.Micro.Screen;
 
 namespace GoonsOnAir.Modules.Shell.ViewModels
 {
-    public abstract class InputOutputProcessBaseViewModel : Screen
+    public abstract class InputOutputProcessBaseViewModel : ProcessBaseViewModel
     {
-        public IEventAggregator EventAggregator { get; set; }
-
         public string InputFolder { get; set; }
 
         public string OutputFolder { get; set; }
-
-        public bool IsRunning { get; set; }
 
         public void BrowseInput()
         {
@@ -45,22 +41,6 @@ namespace GoonsOnAir.Modules.Shell.ViewModels
         }
 
         [DependsOn(nameof(InputFolder), nameof(OutputFolder))]
-        public bool CanRun => !string.IsNullOrWhiteSpace(OutputFolder) && !string.IsNullOrWhiteSpace(InputFolder) && Directory.Exists(OutputFolder) && Directory.Exists(InputFolder);
-
-        public async void Run()
-        {
-            IsRunning = true;
-
-            try
-            {
-                await Task.Run(DoTheWork);
-            }
-            finally
-            {
-                IsRunning = false;
-            }
-        }
-
-        protected abstract void DoTheWork();
+        public override bool CanRun => !string.IsNullOrWhiteSpace(OutputFolder) && !string.IsNullOrWhiteSpace(InputFolder) && Directory.Exists(OutputFolder) && Directory.Exists(InputFolder);
     }
 }

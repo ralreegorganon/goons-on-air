@@ -10,13 +10,10 @@ using Screen = Caliburn.Micro.Screen;
 
 namespace GoonsOnAir.Modules.Shell.ViewModels
 {
-    public abstract class OutputProcessBaseViewModel : Screen
+    public abstract class OutputProcessBaseViewModel : ProcessBaseViewModel
     {
-        public IEventAggregator EventAggregator { get; set; }
-
         public string OutputFolder { get; set; }
 
-        public bool IsRunning { get; set; }
 
         public void BrowseOutput()
         {
@@ -32,30 +29,6 @@ namespace GoonsOnAir.Modules.Shell.ViewModels
         }
 
         [DependsOn( nameof(OutputFolder))]
-        public bool CanRun => !string.IsNullOrWhiteSpace(OutputFolder) && Directory.Exists(OutputFolder);
-
-        public async Task Run()
-        {
-            IsRunning = true;
-
-            try
-            {
-                await DoTheWork();
-            }
-            catch (Exception e)
-            {
-                Log.Error(e, "An unhandled exception occurred");
-                await EventAggregator.PublishOnUIThreadAsync(new StatusMessageEvent {
-                    Text = $"Error: {e}"
-                });
-                throw;
-            }
-            finally
-            {
-                IsRunning = false;
-            }
-        }
-
-        protected abstract Task DoTheWork();
+        public override bool CanRun => !string.IsNullOrWhiteSpace(OutputFolder) && Directory.Exists(OutputFolder);
     }
 }

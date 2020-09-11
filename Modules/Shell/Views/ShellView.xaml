@@ -35,6 +35,9 @@
             <Button cm:Message.Attach="SwitchToDownloadPending" ToolTip="Download Pending Missions" Focusable="False">
                 <iconPacks:PackIconMaterial Kind="AccountCheck" />
             </Button>
+            <Button cm:Message.Attach="SwitchToRefreshFboQueries" ToolTip="Refresh FBO Queries" Focusable="False">
+                <iconPacks:PackIconMaterial Kind="CogRefresh" />
+            </Button>
         </StackPanel>
         <!--
         <Grid Grid.Row="0" Grid.Column="1" >
