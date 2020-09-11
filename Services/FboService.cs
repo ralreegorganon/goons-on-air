@@ -58,7 +58,7 @@ namespace GoonsOnAir.Services
                                     QueryMinAirportSize = q.MinAirportSize,
                                     QueryCanGenerateMissions = q.CanGenerateMissions,
                                     QueryNextRequest = q.NextRequest?.ToString("s"),
-                                    QueryNextRequestDelta = $"{Math.Round((q.NextRequest - DateTime.UtcNow).Value.TotalHours)} hours",
+                                    QueryNextRequestDelta = q.NextRequest == null ? null : $"{Math.Round((q.NextRequest - DateTime.UtcNow).Value.TotalHours)} hours",
                                 });
                                 continue;
                             }
