@@ -89,7 +89,8 @@ namespace GoonsOnAir.Services
                                         MissionMainAirportHeading = m.MainAirportHeading,
                                         MissionTotalDistance = m.TotalDistance,
                                         MissionExpires = m.ExpirationDate?.ToString("s"),
-                                        MissionExpiresDelta = MissionExpiresDelta(m.ExpirationDate),
+                                        MissionExpiresDelta = MissionExpiresDeltaFormatted(m.ExpirationDate),
+                                        MissionExpiresDeltaMinutes = MissionExpiresDeltaMinutes(m.ExpirationDate),
                                         MissionPenalty = m.Penality,
                                         MissionPay = m.Pay,
                                         MissionFavorited = m.IsFavorited,
@@ -126,7 +127,8 @@ namespace GoonsOnAir.Services
                                         MissionMainAirportHeading = m.MainAirportHeading,
                                         MissionTotalDistance = m.TotalDistance,
                                         MissionExpires = m.ExpirationDate?.ToString("s"),
-                                        MissionExpiresDelta = MissionExpiresDelta(m.ExpirationDate),
+                                        MissionExpiresDelta = MissionExpiresDeltaFormatted(m.ExpirationDate),
+                                        MissionExpiresDeltaMinutes = MissionExpiresDeltaMinutes(m.ExpirationDate),
                                         MissionPenalty = m.Penality,
                                         MissionPay = m.Pay,
                                         MissionFavorited = m.IsFavorited,
@@ -195,7 +197,8 @@ namespace GoonsOnAir.Services
                             MissionMainAirportHeading = m.MainAirportHeading,
                             MissionTotalDistance = m.TotalDistance,
                             MissionExpires = m.ExpirationDate == null ? "Never" : m.ExpirationDate?.ToString("s"),
-                            MissionExpiresDelta = MissionExpiresDelta(m.ExpirationDate),
+                            MissionExpiresDelta = MissionExpiresDeltaFormatted(m.ExpirationDate),
+                            MissionExpiresDeltaMinutes = MissionExpiresDeltaMinutes(m.ExpirationDate),
                             MissionPenalty = m.Penality,
                             MissionPay = m.Pay,
                             MissionFavorited = m.IsFavorited,
@@ -216,7 +219,8 @@ namespace GoonsOnAir.Services
                             MissionMainAirportHeading = m.MainAirportHeading,
                             MissionTotalDistance = m.TotalDistance,
                             MissionExpires = m.ExpirationDate == null ? "Never" : m.ExpirationDate?.ToString("s"),
-                            MissionExpiresDelta = MissionExpiresDelta(m.ExpirationDate),
+                            MissionExpiresDelta = MissionExpiresDeltaFormatted(m.ExpirationDate),
+                            MissionExpiresDeltaMinutes = MissionExpiresDeltaMinutes(m.ExpirationDate),
                             MissionPenalty = m.Penality,
                             MissionPay = m.Pay,
                             MissionFavorited = m.IsFavorited,
@@ -266,7 +270,8 @@ namespace GoonsOnAir.Services
                             MissionMainAirportHeading = m.MainAirportHeading,
                             MissionTotalDistance = m.TotalDistance,
                             MissionExpires = m.ExpirationDate?.ToString("s"),
-                            MissionExpiresDelta = MissionExpiresDelta(m.ExpirationDate),
+                            MissionExpiresDelta = MissionExpiresDeltaFormatted(m.ExpirationDate),
+                            MissionExpiresDeltaMinutes = MissionExpiresDeltaMinutes(m.ExpirationDate),
                             MissionPenalty = m.Penality,
                             MissionPay = m.Pay,
                             MissionFavorited = m.IsFavorited,
@@ -287,7 +292,8 @@ namespace GoonsOnAir.Services
                             MissionMainAirportHeading = m.MainAirportHeading,
                             MissionTotalDistance = m.TotalDistance,
                             MissionExpires = m.ExpirationDate?.ToString("s"),
-                            MissionExpiresDelta = MissionExpiresDelta(m.ExpirationDate),
+                            MissionExpiresDelta = MissionExpiresDeltaFormatted(m.ExpirationDate),
+                            MissionExpiresDeltaMinutes = MissionExpiresDeltaMinutes(m.ExpirationDate),
                             MissionPenalty = m.Penality,
                             MissionPay = m.Pay,
                             MissionFavorited = m.IsFavorited,
@@ -345,7 +351,7 @@ namespace GoonsOnAir.Services
             });
         }
 
-        private string MissionExpiresDelta(DateTime? expirationDate)
+        private string MissionExpiresDeltaFormatted(DateTime? expirationDate)
         {
             if (expirationDate == null)
             {
@@ -354,7 +360,17 @@ namespace GoonsOnAir.Services
 
             var delta = (expirationDate - DateTime.UtcNow).Value;
 
-            return delta.ToString(@"dd\:hh\:mm");
+            return delta.Ticks < 0 ? "expired" : $"{delta:dd} days, {delta:hh} hours, {delta:mm} minutes";
+        }
+
+        private int? MissionExpiresDeltaMinutes(DateTime? expirationDate)
+        {
+            if (expirationDate == null)
+            {
+                return null;
+            }
+
+            return (int?) (expirationDate - DateTime.UtcNow).Value.TotalMinutes;
         }
     }
 
@@ -365,6 +381,7 @@ namespace GoonsOnAir.Services
         public double? MissionMainAirportHeading { get; set; }
         public double? MissionTotalDistance { get; set; }
         public string MissionExpires { get; set; }
+        public int? MissionExpiresDeltaMinutes { get; set; }
         public string MissionExpiresDelta { get; set; }
         public decimal? MissionPenalty { get; set; }
         public decimal? MissionPay { get; set; }
@@ -402,6 +419,7 @@ namespace GoonsOnAir.Services
         public double? MissionMainAirportHeading { get; set; }
         public double? MissionTotalDistance { get; set; }
         public string MissionExpires { get; set; }
+        public int? MissionExpiresDeltaMinutes { get; set; }
         public string MissionExpiresDelta { get; set; }
         public decimal? MissionPenalty { get; set; }
         public decimal? MissionPay { get; set; }
