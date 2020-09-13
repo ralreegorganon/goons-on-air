@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using OfficeOpenXml;
 using OfficeOpenXml.Table;
-using ServiceReference2;
 
 namespace GoonsOnAir.Services
 {
@@ -16,6 +14,8 @@ namespace GoonsOnAir.Services
         public Task DownloadPendingMissions(string outputFolder);
         public Task DownloadFavoriteMissions(string outputFolder);
         public Task RefreshFboQueries();
+        public Task AcceptMyFavorites();
+        public Task AcceptVaFavorites();
     }
 
     public class FboService : IFboService
@@ -26,7 +26,7 @@ namespace GoonsOnAir.Services
         {
             var missions = new List<FboMission>();
 
-            await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company) =>
+            await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company, va) =>
                 {
                     var airportsResponse = await client.GetAirportsAsync();
                     var airportsLookup = airportsResponse.Body.GetAirportsResult.ToDictionary(k => k.Id, v => v);
@@ -181,7 +181,7 @@ namespace GoonsOnAir.Services
         {
             var missions = new List<Mission>();
 
-            await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company) => {
+            await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company, va) => {
                 var airportsResponse = await client.GetAirportsAsync();
                 var airportsLookup = airportsResponse.Body.GetAirportsResult.ToDictionary(k => k.Id, v => v);
 
@@ -254,7 +254,7 @@ namespace GoonsOnAir.Services
         {
             var missions = new List<Mission>();
 
-            await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company) =>
+            await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company, va) =>
             {
                 var airportsResponse = await client.GetAirportsAsync();
                 var airportsLookup = airportsResponse.Body.GetAirportsResult.ToDictionary(k => k.Id, v => v);
@@ -325,7 +325,7 @@ namespace GoonsOnAir.Services
 
         public async Task RefreshFboQueries()
         {
-            await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company) => {
+            await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company, va) => {
                 var companyFbOsResponse = await client.GetCompanyFBOsAsync(company.Id);
                 foreach (var fbo in companyFbOsResponse.Body.GetCompanyFBOsResult)
                 {
@@ -346,6 +346,36 @@ namespace GoonsOnAir.Services
                         }
 
                         await client.FBOLogisticQueryGenerateMissionsAsync(ap, company.Id, q.Id);
+                    }
+                }
+            });
+        }
+
+        public async Task AcceptMyFavorites()
+        {
+            await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company, va) => {
+                var peopleResponse = await client.GetUserPeopleByCompanyIDAsync(ap, company.Id);
+                var favoriteResponse = await client.FavoritesGetMissionsAsync(ap, company.Id);
+                foreach (var m in favoriteResponse.Body.FavoritesGetMissionsResult)
+                {
+                    if ((m.ExpirationDate - DateTime.UtcNow).Value.TotalMinutes < 22 && m.ExpirationDate > DateTime.UtcNow)
+                    {
+                        await client.AcceptMissionAsync(ap, peopleResponse.Body.GetUserPeopleByCompanyIDResult.Id, company.Id, m.Id);
+                    }
+                }
+            });
+        }
+
+        public async Task AcceptVaFavorites()
+        {
+            await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company, va) => {
+                var peopleResponse = await client.GetUserPeopleByCompanyIDAsync(ap, va.Id);
+                var favoriteResponse = await client.FavoritesGetMissionsAsync(ap, va.Id);
+                foreach (var m in favoriteResponse.Body.FavoritesGetMissionsResult)
+                {
+                    if ((m.ExpirationDate - DateTime.UtcNow).Value.TotalMinutes < 22 && m.ExpirationDate > DateTime.UtcNow)
+                    {
+                        await client.AcceptMissionAsync(ap, peopleResponse.Body.GetUserPeopleByCompanyIDResult.Id, va.Id, m.Id);
                     }
                 }
             });

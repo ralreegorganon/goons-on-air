@@ -10,7 +10,7 @@ namespace GoonsOnAir
 {
     public static class OnAirClient
     {
-        public static async Task RunInOnAirScope(AccessParams ap, Func<WSOnAirSoapClient, AccessParams, Company, Task> action)
+        public static async Task RunInOnAirScope(AccessParams ap, Func<WSOnAirSoapClient, AccessParams, Company, Company, Task> action)
         {
             var basicHttpsBinding = new BasicHttpsBinding(BasicHttpsSecurityMode.Transport);
             var remoteAddress = new EndpointAddress("https://server.onair.company/WS/WSOnAir.asmx");
@@ -31,11 +31,13 @@ namespace GoonsOnAir
             var currentWorld = worlds.Body.GetWorldsResult.Single(x => x.Name == "Thunder");
             var companyResult = await client.GetCompanyByOwnerAsync(ap, null, currentWorld.Id);
             var company = companyResult.Body.GetCompanyByOwnerResult;
+            var vaCompanyResult = await client.GetCompanyByCodeAsync("GOONS", currentWorld.Id);
+            var vaCompany = vaCompanyResult.Body.GetCompanyByCodeResult;
 
-            await action(client, ap, company);
+            await action(client, ap, company, vaCompany);
         }
 
-        public static async Task RunInOnAirScope(string email, string password, Func<WSOnAirSoapClient, AccessParams, Company, Task> action)
+        public static async Task RunInOnAirScope(string email, string password, Func<WSOnAirSoapClient, AccessParams, Company, Company, Task> action)
         {
             var authClient = new OnAirAuthenticationWSClient(
                 new BasicHttpsBinding(BasicHttpsSecurityMode.Transport),

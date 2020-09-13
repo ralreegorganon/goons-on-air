@@ -38,6 +38,9 @@
             <Button cm:Message.Attach="SwitchToRefreshFboQueries" ToolTip="Refresh FBO Queries" Focusable="False">
                 <iconPacks:PackIconMaterial Kind="CogRefresh" />
             </Button>
+            <Button cm:Message.Attach="SwitchToAutoAccept" ToolTip="Automatically Accept Favorited Missions" Focusable="False">
+                <iconPacks:PackIconMaterial Kind="CheckboxMarkedOutline" />
+            </Button>
         </StackPanel>
         <!--
         <Grid Grid.Row="0" Grid.Column="1" >

@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="GoonsOnAir.Modules.Shell.Views.AutoAcceptView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:GoonsOnAir.Modules.Shell.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="5" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" TextWrapping="Wrap">While checked, this will run every 15 minutes and accept any favorited missions that are not expired but have less than 22 minutes remaining.</TextBlock>
+        <ProgressBar Grid.Row="1" IsIndeterminate="True" IsEnabled="True" Visibility="{Binding IsRunning, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        <CheckBox Grid.Row="3" Margin="5" x:Name="AutoAcceptMine">Accept my favorited missions automatically</CheckBox>
+        <CheckBox Grid.Row="4" Margin="5" x:Name="AutoAcceptVa">Accept the VA favorited missions automatically</CheckBox>
+        <Label Grid.Row="5" x:Name="LastRanAt"/>
+    </Grid>
+</UserControl>

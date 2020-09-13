@@ -10,7 +10,6 @@ namespace GoonsOnAir.Modules.Shell.ViewModels
     {
         public IEventAggregator EventAggregator { get; set; }
 
-
         public bool IsRunning { get; set; }
 
         public virtual bool CanRun => true;
