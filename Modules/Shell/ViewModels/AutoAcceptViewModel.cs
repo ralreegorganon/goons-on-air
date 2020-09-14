@@ -70,13 +70,13 @@ namespace GoonsOnAir.Modules.Shell.ViewModels
 
             try
             {
-                if (AutoAcceptMine)
-                {
-                    FboService.AcceptMyFavorites().Wait();
-                }
                 if (AutoAcceptVa)
                 {
                     FboService.AcceptVaFavorites().Wait();
+                }
+                if (AutoAcceptMine)
+                {
+                    FboService.AcceptMyFavorites().Wait();
                 }
             }
             catch (Exception ex)

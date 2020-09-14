@@ -21,7 +21,7 @@
         <TextBlock Grid.Row="0" TextWrapping="Wrap">While checked, this will run every 15 minutes and accept any favorited missions that are not expired but have less than 22 minutes remaining.</TextBlock>
         <ProgressBar Grid.Row="1" IsIndeterminate="True" IsEnabled="True" Visibility="{Binding IsRunning, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         <CheckBox Grid.Row="3" Margin="5" x:Name="AutoAcceptMine">Accept my favorited missions automatically</CheckBox>
-        <CheckBox Grid.Row="4" Margin="5" x:Name="AutoAcceptVa">Accept the VA favorited missions automatically</CheckBox>
+        <CheckBox Grid.Row="4" Margin="5" x:Name="AutoAcceptVa">Accept VA favorited missions automatically</CheckBox>
         <Label Grid.Row="5" x:Name="LastRanAt"/>
     </Grid>
 </UserControl>
