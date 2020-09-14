@@ -21,6 +21,7 @@ namespace GoonsOnAir.Modules.Shell.ViewModels
         public DownloadPendingViewModel DownloadPendingViewModel { get; set; }
         public RefreshFboQueriesViewModel RefreshFboQueriesViewModel { get; set; }
         public AutoAcceptViewModel AutoAcceptViewModel { get; set; }
+        public AddFavoriteMissionViewModel AddFavoriteMissionViewModel { get; set; }
 
         protected override async Task OnActivateAsync(CancellationToken cancellationToken)
         {
@@ -51,6 +52,11 @@ namespace GoonsOnAir.Modules.Shell.ViewModels
         public async Task SwitchToAutoAccept()
         {
             await ActivateItemAsync(AutoAcceptViewModel, CancellationToken.None);
+        }
+
+        public async Task SwitchToAddFavoriteMission()
+        {
+            await ActivateItemAsync(AddFavoriteMissionViewModel, CancellationToken.None);
         }
 
         public Task HandleAsync(StatusMessageEvent message, CancellationToken cancellationToken)

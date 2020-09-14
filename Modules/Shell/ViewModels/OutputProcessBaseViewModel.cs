@@ -1,12 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Caliburn.Micro;
-using GoonsOnAir.Modules.Shell.Events;
 using PropertyChanged;
-using Serilog;
-using Screen = Caliburn.Micro.Screen;
 
 namespace GoonsOnAir.Modules.Shell.ViewModels
 {

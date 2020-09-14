@@ -41,6 +41,9 @@
             <Button cm:Message.Attach="SwitchToAutoAccept" ToolTip="Automatically Accept Favorited Missions" Focusable="False">
                 <iconPacks:PackIconMaterial Kind="CheckboxMarkedOutline" />
             </Button>
+            <Button cm:Message.Attach="SwitchToAddFavoriteMission" ToolTip="Add Mission to Favorites" Focusable="False">
+                <iconPacks:PackIconMaterial Kind="PlaylistPlus" />
+            </Button>
         </StackPanel>
         <!--
         <Grid Grid.Row="0" Grid.Column="1" >

@@ -17,6 +17,8 @@ namespace GoonsOnAir.Services
         public Task RefreshFboQueries();
         public Task AcceptMyFavorites();
         public Task AcceptVaFavorites();
+        public Task FavoriteMissionForMyCompany(string missionId);
+        public Task FavoriteMissionForVa(string missionId);
     }
 
     public class FboService : IFboService
@@ -402,6 +404,20 @@ namespace GoonsOnAir.Services
                         await client.AcceptMissionAsync(ap, peopleResponse.Body.GetUserPeopleByCompanyIDResult.Id, va.Id, m.Id);
                     }
                 }
+            });
+        }
+
+        public async Task FavoriteMissionForMyCompany(string missionId)
+        {
+            await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company, va) => {
+                await client.FavoritesAddAsync(ap, company.Id, missionId);
+            });
+        }
+
+        public async Task FavoriteMissionForVa(string missionId)
+        {
+            await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company, va) => {
+                await client.FavoritesAddAsync(ap,  va.Id, missionId);
             });
         }
 
