@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using OfficeOpenXml;
 using OfficeOpenXml.Table;
+using ServiceReference2;
 
 namespace GoonsOnAir.Services
 {
@@ -252,80 +253,103 @@ namespace GoonsOnAir.Services
 
         public async Task DownloadFavoriteMissions(string outputFolder)
         {
-            var missions = new List<Mission>();
+            var missionsMine = new List<Mission>();
+            var missionsVa = new List<Mission>();
 
             await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company, va) =>
             {
                 var airportsResponse = await client.GetAirportsAsync();
                 var airportsLookup = airportsResponse.Body.GetAirportsResult.ToDictionary(k => k.Id, v => v);
 
-                var favoriteResponse = await client.FavoritesGetMissionsAsync(ap, company.Id);
-                foreach (var m in favoriteResponse.Body.FavoritesGetMissionsResult)
+                async Task GetFavorites(Company c, List<Mission> missions)
                 {
-                    foreach (var cargo in m.Cargos)
+                    var favoriteResponse = await client.FavoritesGetMissionsAsync(ap, c.Id);
+                    foreach (var m in favoriteResponse.Body.FavoritesGetMissionsResult)
                     {
-                        missions.Add(new Mission {
-                            MissionId = m.Id,
-                            MissionMainAirport = airportsLookup[m.MainAirportId].ICAO,
-                            MissionMainAirportHeading = m.MainAirportHeading,
-                            MissionTotalDistance = m.TotalDistance,
-                            MissionExpires = m.ExpirationDate?.ToString("s"),
-                            MissionExpiresDelta = MissionExpiresDeltaFormatted(m.ExpirationDate),
-                            MissionExpiresDeltaMinutes = MissionExpiresDeltaMinutes(m.ExpirationDate),
-                            MissionPenalty = m.Penality,
-                            MissionPay = m.Pay,
-                            MissionFavorited = m.IsFavorited,
-                            LegFrom = cargo.DepartureAirport.ICAO,
-                            LegTo = cargo.DestinationAirport.ICAO,
-                            LegCurrent = cargo.CurrentAirport?.ICAO,
-                            LegAircraft = cargo.CurrentAircraft?.Identifier,
-                            LegCargo = cargo.Weight,
-                            LegHeading = cargo.Heading,
-                            LegDistance = cargo.Distance
-                        });
-                    }
-                    foreach (var charter in m.Charters)
-                    {
-                        missions.Add(new Mission {
-                            MissionId = m.Id,
-                            MissionMainAirport = airportsLookup[m.MainAirportId].ICAO,
-                            MissionMainAirportHeading = m.MainAirportHeading,
-                            MissionTotalDistance = m.TotalDistance,
-                            MissionExpires = m.ExpirationDate?.ToString("s"),
-                            MissionExpiresDelta = MissionExpiresDeltaFormatted(m.ExpirationDate),
-                            MissionExpiresDeltaMinutes = MissionExpiresDeltaMinutes(m.ExpirationDate),
-                            MissionPenalty = m.Penality,
-                            MissionPay = m.Pay,
-                            MissionFavorited = m.IsFavorited,
-                            LegFrom = charter.DepartureAirport.ICAO,
-                            LegTo = charter.DestinationAirport.ICAO,
-                            LegCurrent = charter.CurrentAirport?.ICAO,
-                            LegAircraft = charter.CurrentAircraft?.Identifier,
-                            LegPax = charter.PassengersNumber,
-                            LegHeading = charter.Heading,
-                            LegDistance = charter.Distance
-                        });
+                        foreach (var cargo in m.Cargos)
+                        {
+                            missions.Add(new Mission {
+                                MissionId = m.Id,
+                                MissionMainAirport = airportsLookup[m.MainAirportId]
+                                    .ICAO,
+                                MissionMainAirportHeading = m.MainAirportHeading,
+                                MissionTotalDistance = m.TotalDistance,
+                                MissionExpires = m.ExpirationDate?.ToString("s"),
+                                MissionExpiresDelta = MissionExpiresDeltaFormatted(m.ExpirationDate),
+                                MissionExpiresDeltaMinutes = MissionExpiresDeltaMinutes(m.ExpirationDate),
+                                MissionPenalty = m.Penality,
+                                MissionPay = m.Pay,
+                                MissionFavorited = m.IsFavorited,
+                                LegFrom = cargo.DepartureAirport.ICAO,
+                                LegTo = cargo.DestinationAirport.ICAO,
+                                LegCurrent = cargo.CurrentAirport?.ICAO,
+                                LegAircraft = cargo.CurrentAircraft?.Identifier,
+                                LegCargo = cargo.Weight,
+                                LegHeading = cargo.Heading,
+                                LegDistance = cargo.Distance
+                            });
+                        }
+
+                        foreach (var charter in m.Charters)
+                        {
+                            missions.Add(new Mission {
+                                MissionId = m.Id,
+                                MissionMainAirport = airportsLookup[m.MainAirportId]
+                                    .ICAO,
+                                MissionMainAirportHeading = m.MainAirportHeading,
+                                MissionTotalDistance = m.TotalDistance,
+                                MissionExpires = m.ExpirationDate?.ToString("s"),
+                                MissionExpiresDelta = MissionExpiresDeltaFormatted(m.ExpirationDate),
+                                MissionExpiresDeltaMinutes = MissionExpiresDeltaMinutes(m.ExpirationDate),
+                                MissionPenalty = m.Penality,
+                                MissionPay = m.Pay,
+                                MissionFavorited = m.IsFavorited,
+                                LegFrom = charter.DepartureAirport.ICAO,
+                                LegTo = charter.DestinationAirport.ICAO,
+                                LegCurrent = charter.CurrentAirport?.ICAO,
+                                LegAircraft = charter.CurrentAircraft?.Identifier,
+                                LegPax = charter.PassengersNumber,
+                                LegHeading = charter.Heading,
+                                LegDistance = charter.Distance
+                            });
+                        }
                     }
                 }
+
+                await GetFavorites(company, missionsMine);
+                await GetFavorites(va, missionsVa);
             });
 
             var path = Path.Combine(outputFolder, $"FavoriteMissions_{DateTime.Now:yyyy-MM-dd_HH.mm.ss}.xlsx");
 
             using var package = new ExcelPackage(new FileInfo(path));
-            var worksheet = package.Workbook.Worksheets.Add("Favorite Missions");
-            worksheet.Cells["A1"].LoadFromCollection(Collection: missions, PrintHeaders: true);
+            var worksheet = package.Workbook.Worksheets.Add("Favorite Missions (Mine)");
+            worksheet.Cells["A1"].LoadFromCollection(Collection: missionsMine, PrintHeaders: true);
             using (var rng = worksheet.Cells[worksheet.Dimension.Address])
             {
-                var table = worksheet.Tables.Add(rng, "FavoriteMissions");
+                var table = worksheet.Tables.Add(rng, "FavoriteMissionsMine");
                 table.TableStyle = TableStyles.Light1;
             }
             worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+            worksheet = package.Workbook.Worksheets.Add("Favorite Missions (VA)");
+            worksheet.Cells["A1"].LoadFromCollection(Collection: missionsVa, PrintHeaders: true);
+            using (var rng = worksheet.Cells[worksheet.Dimension.Address])
+            {
+                var table = worksheet.Tables.Add(rng, "FavoriteMissionsVA");
+                table.TableStyle = TableStyles.Light1;
+            }
+            worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
             await package.SaveAsync();
         }
 
         public async Task RefreshFboQueries()
         {
             await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company, va) => {
+                var favoriteResponse = await client.FavoritesGetMissionsAsync(ap, va.Id);
+                var companyFavorites = favoriteResponse.Body.FavoritesGetMissionsResult.Select(x => x.Id);
+
                 var companyFbOsResponse = await client.GetCompanyFBOsAsync(company.Id);
                 foreach (var fbo in companyFbOsResponse.Body.GetCompanyFBOsResult)
                 {
@@ -340,7 +364,7 @@ namespace GoonsOnAir.Services
                         var missionsResponse = await client.FBOLogisticQueryGetMissionsAsync(ap, company.Id, q.Id);
                         var currentMissions = missionsResponse.Body.FBOLogisticQueryGetMissionsResult;
 
-                        if (currentMissions.Any(x => x.IsFavorited))
+                        if (currentMissions.Any(x => x.IsFavorited || companyFavorites.Contains(x.Id)))
                         {
                             continue;
                         }
