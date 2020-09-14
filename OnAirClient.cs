@@ -2,7 +2,6 @@
 using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
-using ServiceReference1;
 using ServiceReference2;
 using AccessParams = ServiceReference2.AccessParams;
 
@@ -13,7 +12,7 @@ namespace GoonsOnAir
         public static async Task RunInOnAirScope(AccessParams ap, Func<WSOnAirSoapClient, AccessParams, Company, Company, Task> action)
         {
             var basicHttpsBinding = new BasicHttpsBinding(BasicHttpsSecurityMode.Transport);
-            var remoteAddress = new EndpointAddress("https://server.onair.company/WS/WSOnAir.asmx");
+            var remoteAddress = new EndpointAddress("https://thunder.onair.company/WS/WSOnAir.asmx");
             basicHttpsBinding.CloseTimeout = TimeSpan.FromSeconds(120.0);
             basicHttpsBinding.OpenTimeout = TimeSpan.FromSeconds(120.0);
             basicHttpsBinding.ReceiveTimeout = TimeSpan.FromSeconds(120.0);
@@ -35,32 +34,6 @@ namespace GoonsOnAir
             var vaCompany = vaCompanyResult.Body.GetCompanyByCodeResult;
 
             await action(client, ap, company, vaCompany);
-        }
-
-        public static async Task RunInOnAirScope(string email, string password, Func<WSOnAirSoapClient, AccessParams, Company, Company, Task> action)
-        {
-            var authClient = new OnAirAuthenticationWSClient(
-                new BasicHttpsBinding(BasicHttpsSecurityMode.Transport),
-                new EndpointAddress("https://authentication.onair.company/WS/OnAirAuthenticationWS.svc"));
-
-            var loginResult = await authClient.LoginAsync(new LoginParams {
-                AccessParams = new ServiceReference1.AccessParams {
-                    OAuth2Service = ServiceReference1.OAuth2Service.OnAir,
-                    OnAirParams = new ServiceReference1.OnAirParams {
-                        Email = email,
-                        Password = password
-                    }
-                },
-                DirectoryId = new Guid("61a74a0a-3152-4675-be1a-3a8bd3a874d1")
-            });
-
-            var token = loginResult.AccessParams.OnAirParams.AccessToken;
-
-            var accessParams = new ServiceReference2.AccessParams {
-                OnAirParams = new ServiceReference2.OnAirParams { AccessToken = token }
-            };
-
-            await RunInOnAirScope(accessParams, action);
         }
     }
 }

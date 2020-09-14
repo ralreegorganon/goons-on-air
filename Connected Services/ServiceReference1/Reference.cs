@@ -2687,6 +2687,88 @@ namespace ServiceReference1
         }
     }
     
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="Server", Namespace="http://schemas.datacontract.org/2004/07/OnAir.Authentication")]
+    public partial class Server : object
+    {
+        
+        private System.Guid IdField;
+        
+        private string NameField;
+        
+        private string ServerHostnameField;
+        
+        private string WorldHostnameField;
+        
+        private System.Guid WorldIdField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Guid Id
+        {
+            get
+            {
+                return this.IdField;
+            }
+            set
+            {
+                this.IdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Name
+        {
+            get
+            {
+                return this.NameField;
+            }
+            set
+            {
+                this.NameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ServerHostname
+        {
+            get
+            {
+                return this.ServerHostnameField;
+            }
+            set
+            {
+                this.ServerHostnameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WorldHostname
+        {
+            get
+            {
+                return this.WorldHostnameField;
+            }
+            set
+            {
+                this.WorldHostnameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Guid WorldId
+        {
+            get
+            {
+                return this.WorldIdField;
+            }
+            set
+            {
+                this.WorldIdField = value;
+            }
+        }
+    }
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ServiceReference1.IOnAirAuthenticationWS")]
     public interface IOnAirAuthenticationWS
@@ -2727,6 +2809,9 @@ namespace ServiceReference1
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IOnAirAuthenticationWS/GetSubscriptionEndDate", ReplyAction="http://tempuri.org/IOnAirAuthenticationWS/GetSubscriptionEndDateResponse")]
         System.Threading.Tasks.Task<ServiceReference1.GetSubscriptionEndDateResult> GetSubscriptionEndDateAsync(ServiceReference1.WSParams p);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IOnAirAuthenticationWS/GetServers", ReplyAction="http://tempuri.org/IOnAirAuthenticationWS/GetServersResponse")]
+        System.Threading.Tasks.Task<System.Collections.Generic.List<ServiceReference1.Server>> GetServersAsync(ServiceReference1.WSParams p);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
@@ -2839,6 +2924,11 @@ namespace ServiceReference1
             return base.Channel.GetSubscriptionEndDateAsync(p);
         }
         
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<ServiceReference1.Server>> GetServersAsync(ServiceReference1.WSParams p)
+        {
+            return base.Channel.GetServersAsync(p);
+        }
+        
         public virtual System.Threading.Tasks.Task OpenAsync()
         {
             return System.Threading.Tasks.Task.Factory.FromAsync(((System.ServiceModel.ICommunicationObject)(this)).BeginOpen(null, null), new System.Action<System.IAsyncResult>(((System.ServiceModel.ICommunicationObject)(this)).EndOpen));
@@ -2868,7 +2958,7 @@ namespace ServiceReference1
         {
             if ((endpointConfiguration == EndpointConfiguration.BasicHttpsBinding_IOnAirAuthenticationWS))
             {
-                return new System.ServiceModel.EndpointAddress("https://authentication.onair.company/WS/OnAirAuthenticationWS.svc");
+                return new System.ServiceModel.EndpointAddress("https://auth.onair.company/WS/OnAirAuthenticationWS.svc");
             }
             throw new System.InvalidOperationException(string.Format("Could not find endpoint with name \'{0}\'.", endpointConfiguration));
         }

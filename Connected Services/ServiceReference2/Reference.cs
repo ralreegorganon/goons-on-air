@@ -3589,6 +3589,8 @@ namespace ServiceReference2
         
         private double designSpeedVCField;
         
+        private bool IsDisabledField;
+        
         private string CreatedByUserIdField;
         
         private bool TestedByUserField;
@@ -4042,6 +4044,19 @@ namespace ServiceReference2
         }
         
         [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=34)]
+        public bool IsDisabled
+        {
+            get
+            {
+                return this.IsDisabledField;
+            }
+            set
+            {
+                this.IsDisabledField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=35)]
         public string CreatedByUserId
         {
             get
@@ -4054,7 +4069,7 @@ namespace ServiceReference2
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=35)]
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=36)]
         public bool TestedByUser
         {
             get
@@ -4067,7 +4082,7 @@ namespace ServiceReference2
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=36)]
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=37)]
         public double StandardSeatWeight
         {
             get
@@ -4080,7 +4095,7 @@ namespace ServiceReference2
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=37)]
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=38)]
         public string SimVersionShortDisplay
         {
             get
@@ -4093,7 +4108,7 @@ namespace ServiceReference2
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=38)]
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=39)]
         public string SimVersionDisplay
         {
             get
@@ -16676,6 +16691,298 @@ namespace ServiceReference2
             set
             {
                 this.PeriodEndField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="AircraftTypeChangeRequest", Namespace="http://onair.company/")]
+    public partial class AircraftTypeChangeRequest : object
+    {
+        
+        private string IdField;
+        
+        private System.DateTime CreationDateField;
+        
+        private string AircraftTypeIdField;
+        
+        private ServiceReference2.AircraftType AircraftTypeField;
+        
+        private string AircraftClassIdField;
+        
+        private ServiceReference2.AircraftClass AircraftClassField;
+        
+        private string UserIdField;
+        
+        private int SeatsField;
+        
+        private bool NeedsCopilotField;
+        
+        private double DesignSpeedVS0Field;
+        
+        private int MaximumCargoWeightField;
+        
+        private int FuelTypeField;
+        
+        private string SourceField;
+        
+        private bool DisableAircraftField;
+        
+        private string DisableReasonField;
+        
+        private string DisplayNameField;
+        
+        private bool ModeratedField;
+        
+        private System.Nullable<System.DateTime> ModerationDateField;
+        
+        private bool AcceptedField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, EmitDefaultValue=false)]
+        public string Id
+        {
+            get
+            {
+                return this.IdField;
+            }
+            set
+            {
+                this.IdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=1)]
+        public System.DateTime CreationDate
+        {
+            get
+            {
+                return this.CreationDateField;
+            }
+            set
+            {
+                this.CreationDateField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, EmitDefaultValue=false, Order=2)]
+        public string AircraftTypeId
+        {
+            get
+            {
+                return this.AircraftTypeIdField;
+            }
+            set
+            {
+                this.AircraftTypeIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=3)]
+        public ServiceReference2.AircraftType AircraftType
+        {
+            get
+            {
+                return this.AircraftTypeField;
+            }
+            set
+            {
+                this.AircraftTypeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, EmitDefaultValue=false, Order=4)]
+        public string AircraftClassId
+        {
+            get
+            {
+                return this.AircraftClassIdField;
+            }
+            set
+            {
+                this.AircraftClassIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=5)]
+        public ServiceReference2.AircraftClass AircraftClass
+        {
+            get
+            {
+                return this.AircraftClassField;
+            }
+            set
+            {
+                this.AircraftClassField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, EmitDefaultValue=false, Order=6)]
+        public string UserId
+        {
+            get
+            {
+                return this.UserIdField;
+            }
+            set
+            {
+                this.UserIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=7)]
+        public int Seats
+        {
+            get
+            {
+                return this.SeatsField;
+            }
+            set
+            {
+                this.SeatsField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=8)]
+        public bool NeedsCopilot
+        {
+            get
+            {
+                return this.NeedsCopilotField;
+            }
+            set
+            {
+                this.NeedsCopilotField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=9)]
+        public double DesignSpeedVS0
+        {
+            get
+            {
+                return this.DesignSpeedVS0Field;
+            }
+            set
+            {
+                this.DesignSpeedVS0Field = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=10)]
+        public int MaximumCargoWeight
+        {
+            get
+            {
+                return this.MaximumCargoWeightField;
+            }
+            set
+            {
+                this.MaximumCargoWeightField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=11)]
+        public int FuelType
+        {
+            get
+            {
+                return this.FuelTypeField;
+            }
+            set
+            {
+                this.FuelTypeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=12)]
+        public string Source
+        {
+            get
+            {
+                return this.SourceField;
+            }
+            set
+            {
+                this.SourceField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=13)]
+        public bool DisableAircraft
+        {
+            get
+            {
+                return this.DisableAircraftField;
+            }
+            set
+            {
+                this.DisableAircraftField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=14)]
+        public string DisableReason
+        {
+            get
+            {
+                return this.DisableReasonField;
+            }
+            set
+            {
+                this.DisableReasonField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=15)]
+        public string DisplayName
+        {
+            get
+            {
+                return this.DisplayNameField;
+            }
+            set
+            {
+                this.DisplayNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=16)]
+        public bool Moderated
+        {
+            get
+            {
+                return this.ModeratedField;
+            }
+            set
+            {
+                this.ModeratedField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=17)]
+        public System.Nullable<System.DateTime> ModerationDate
+        {
+            get
+            {
+                return this.ModerationDateField;
+            }
+            set
+            {
+                this.ModerationDateField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=18)]
+        public bool Accepted
+        {
+            get
+            {
+                return this.AcceptedField;
+            }
+            set
+            {
+                this.AcceptedField = value;
             }
         }
     }
@@ -35807,7 +36114,7 @@ namespace ServiceReference2
         public ServiceReference2.AccessParams accessParams;
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=1)]
-        public ServiceReference2.AircraftType aircraftType;
+        public ServiceReference2.AircraftTypeChangeRequest changeRequest;
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=2)]
         public string source;
@@ -35816,10 +36123,10 @@ namespace ServiceReference2
         {
         }
         
-        public ProposeAircraftChangeRequestRequestBody(ServiceReference2.AccessParams accessParams, ServiceReference2.AircraftType aircraftType, string source)
+        public ProposeAircraftChangeRequestRequestBody(ServiceReference2.AccessParams accessParams, ServiceReference2.AircraftTypeChangeRequest changeRequest, string source)
         {
             this.accessParams = accessParams;
-            this.aircraftType = aircraftType;
+            this.changeRequest = changeRequest;
             this.source = source;
         }
     }
@@ -45829,12 +46136,12 @@ namespace ServiceReference2
             return base.Channel.ProposeAircraftChangeRequestAsync(request);
         }
         
-        public System.Threading.Tasks.Task<ServiceReference2.ProposeAircraftChangeRequestResponse> ProposeAircraftChangeRequestAsync(ServiceReference2.AccessParams accessParams, ServiceReference2.AircraftType aircraftType, string source)
+        public System.Threading.Tasks.Task<ServiceReference2.ProposeAircraftChangeRequestResponse> ProposeAircraftChangeRequestAsync(ServiceReference2.AccessParams accessParams, ServiceReference2.AircraftTypeChangeRequest changeRequest, string source)
         {
             ServiceReference2.ProposeAircraftChangeRequestRequest inValue = new ServiceReference2.ProposeAircraftChangeRequestRequest();
             inValue.Body = new ServiceReference2.ProposeAircraftChangeRequestRequestBody();
             inValue.Body.accessParams = accessParams;
-            inValue.Body.aircraftType = aircraftType;
+            inValue.Body.changeRequest = changeRequest;
             inValue.Body.source = source;
             return ((ServiceReference2.WSOnAirSoap)(this)).ProposeAircraftChangeRequestAsync(inValue);
         }
@@ -47293,11 +47600,11 @@ namespace ServiceReference2
         {
             if ((endpointConfiguration == EndpointConfiguration.WSOnAirSoap))
             {
-                return new System.ServiceModel.EndpointAddress("https://server.onair.company/WS/WSOnAir.asmx");
+                return new System.ServiceModel.EndpointAddress("https://thunder.onair.company/WS/WSOnAir.asmx");
             }
             if ((endpointConfiguration == EndpointConfiguration.WSOnAirSoap12))
             {
-                return new System.ServiceModel.EndpointAddress("https://server.onair.company/WS/WSOnAir.asmx");
+                return new System.ServiceModel.EndpointAddress("https://thunder.onair.company/WS/WSOnAir.asmx");
             }
             throw new System.InvalidOperationException(string.Format("Could not find endpoint with name \'{0}\'.", endpointConfiguration));
         }
