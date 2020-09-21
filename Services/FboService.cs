@@ -20,6 +20,7 @@ namespace GoonsOnAir.Services
         public Task FavoriteMissionForMyCompany(string missionId);
         public Task FavoriteMissionForVa(string missionId);
         public Task UpgradeFbos(bool shouldIncreaseJetFuelCapacity, int? jetFuelCapacity, bool shouldStartSellingJetFuel, decimal? jetFuelSalePrice, bool shouldStopSellingJetFuel, bool shouldPurchaseJetFuel, bool shouldLimitFbos, List<string> icaos);
+        public Task DownloadCashFlow(string outputFolder);
     }
 
     public class FboService : IFboService
@@ -465,6 +466,50 @@ namespace GoonsOnAir.Services
                         await client.UpdateFBOAsync(ap, fbo);
                     }
                 }
+            });
+        }
+
+        public async Task DownloadCashFlow(string outputFolder)
+        {
+            await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company, va) => {
+                var cashFlowResponse = await client.AccountGetCompanyCashFlowAsync(ap, company.Id);
+                var flow = cashFlowResponse.Body.AccountGetCompanyCashFlowResult.Entries.Select(x => new {
+                        Timestamp = x.CreationDate.ToString("s"),
+                        x.Description,
+                        x.Amount
+                    })
+                    .ToList();
+
+                var cashFlowResponseVa = await client.AccountGetCompanyCashFlowAsync(ap, va.Id);
+                var flowVa = cashFlowResponse.Body.AccountGetCompanyCashFlowResult.Entries.Select(x => new {
+                        Timestamp = x.CreationDate.ToString("s"),
+                        x.Description,
+                        x.Amount
+                    })
+                    .ToList();
+
+                var path = Path.Combine(outputFolder, $"CashFlow_{DateTime.Now:yyyy-MM-dd_HH.mm.ss}.xlsx");
+
+                using var package = new ExcelPackage(new FileInfo(path));
+                var worksheet = package.Workbook.Worksheets.Add("Cash Flow (Mine)");
+                worksheet.Cells["A1"].LoadFromCollection(Collection: flow, PrintHeaders: true);
+                using (var rng = worksheet.Cells[worksheet.Dimension.Address])
+                {
+                    var table = worksheet.Tables.Add(rng, "CashFlowMine");
+                    table.TableStyle = TableStyles.Light1;
+                }
+                worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+                worksheet = package.Workbook.Worksheets.Add("Cash Flow (VA)");
+                worksheet.Cells["A1"].LoadFromCollection(Collection: flowVa, PrintHeaders: true);
+                using (var rng = worksheet.Cells[worksheet.Dimension.Address])
+                {
+                    var table = worksheet.Tables.Add(rng, "CashFlowVA");
+                    table.TableStyle = TableStyles.Light1;
+                }
+                worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+                await package.SaveAsync();
             });
         }
 

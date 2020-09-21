@@ -47,6 +47,9 @@
             <Button cm:Message.Attach="SwitchToFboUpgrade" ToolTip="Upgrade FBOs" Focusable="False">
                 <iconPacks:PackIconMaterial Kind="Wrench" />
             </Button>
+            <Button cm:Message.Attach="SwitchToDownloadCashFlow" ToolTip="Download Cash Flow" Focusable="False">
+                <iconPacks:PackIconMaterial Kind="CurrencyUsd" />
+            </Button>
         </StackPanel>
         <!--
         <Grid Grid.Row="0" Grid.Column="1" >
