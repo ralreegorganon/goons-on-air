@@ -19,6 +19,7 @@ namespace GoonsOnAir.Services
         public Task AcceptVaFavorites();
         public Task FavoriteMissionForMyCompany(string missionId);
         public Task FavoriteMissionForVa(string missionId);
+        public Task UpgradeFbos(bool shouldIncreaseJetFuelCapacity, int? jetFuelCapacity, bool shouldStartSellingJetFuel, decimal? jetFuelSalePrice, bool shouldStopSellingJetFuel, bool shouldPurchaseJetFuel, bool shouldLimitFbos, List<string> icaos);
     }
 
     public class FboService : IFboService
@@ -418,6 +419,52 @@ namespace GoonsOnAir.Services
         {
             await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company, va) => {
                 await client.FavoritesAddAsync(ap,  va.Id, missionId);
+            });
+        }
+
+        public async Task UpgradeFbos(bool shouldIncreaseJetFuelCapacity, int? jetFuelCapacity, bool shouldStartSellingJetFuel, decimal? jetFuelSalePrice, bool shouldStopSellingJetFuel, bool shouldPurchaseJetFuel, bool shouldLimitFbos, List<string> icaos)
+        {
+            await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company, va) => {
+                var airportsResponse = await client.GetAirportsAsync();
+                var airportsLookup = airportsResponse.Body.GetAirportsResult.ToDictionary(k => k.Id, v => v);
+                var peopleResponse = await client.GetUserPeopleByCompanyIDAsync(ap, company.Id);
+
+                var companyFbOsResponse = await client.GetCompanyFBOsAsync(company.Id);
+                foreach (var fbo in companyFbOsResponse.Body.GetCompanyFBOsResult)
+                {
+                    if (shouldLimitFbos && !icaos.Contains(airportsLookup[fbo.AirportId]
+                        .ICAO))
+                    {
+                        continue;
+                    }
+
+                    if (shouldStopSellingJetFuel)
+                    {
+                        fbo.AllowFuelJetSelling = false;
+                    }
+
+                    if (shouldStartSellingJetFuel)
+                    {
+                        fbo.AllowFuelJetSelling = true;
+                        fbo.FuelJetSellPrice = jetFuelSalePrice.Value;
+                    }
+
+                    if (shouldStopSellingJetFuel || shouldStartSellingJetFuel)
+                    {
+                        await client.UpdateFBOSellParamsAsync(ap, company.Id, fbo);
+                    }
+
+                    if (shouldPurchaseJetFuel && fbo.FuelJetOrderedQuantity == 0 && (fbo.FuelJetCapacity - fbo.FuelJetQuantity) > 0)
+                    {
+                        await client.BuyFuelFromLocalDealerAsync(ap, peopleResponse.Body.GetUserPeopleByCompanyIDResult.Id, fbo.Id, 0, fbo.FuelJetCapacity - fbo.FuelJetQuantity);
+                    }
+
+                    if (shouldIncreaseJetFuelCapacity && fbo.FuelJetOrderedCapacity == 0)
+                    {
+                        fbo.FuelJetCapacity += jetFuelCapacity.Value;
+                        await client.UpdateFBOAsync(ap, fbo);
+                    }
+                }
             });
         }
 

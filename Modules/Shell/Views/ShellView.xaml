@@ -11,7 +11,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              Title="GOONS On Air"
-             Height="265"
+             Height="300"
              Width="600"
              WindowStartupLocation="CenterScreen"
              >
@@ -43,6 +43,9 @@
             </Button>
             <Button cm:Message.Attach="SwitchToAddFavoriteMission" ToolTip="Add Mission to Favorites" Focusable="False">
                 <iconPacks:PackIconMaterial Kind="PlaylistPlus" />
+            </Button>
+            <Button cm:Message.Attach="SwitchToFboUpgrade" ToolTip="Upgrade FBOs" Focusable="False">
+                <iconPacks:PackIconMaterial Kind="Wrench" />
             </Button>
         </StackPanel>
         <!--

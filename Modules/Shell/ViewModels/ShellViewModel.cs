@@ -22,6 +22,7 @@ namespace GoonsOnAir.Modules.Shell.ViewModels
         public RefreshFboQueriesViewModel RefreshFboQueriesViewModel { get; set; }
         public AutoAcceptViewModel AutoAcceptViewModel { get; set; }
         public AddFavoriteMissionViewModel AddFavoriteMissionViewModel { get; set; }
+        public FboUpgradeViewModel FboUpgradeViewModel { get; set; }
 
         protected override async Task OnActivateAsync(CancellationToken cancellationToken)
         {
@@ -57,6 +58,11 @@ namespace GoonsOnAir.Modules.Shell.ViewModels
         public async Task SwitchToAddFavoriteMission()
         {
             await ActivateItemAsync(AddFavoriteMissionViewModel, CancellationToken.None);
+        }
+
+        public async Task SwitchToFboUpgrade()
+        {
+            await ActivateItemAsync(FboUpgradeViewModel, CancellationToken.None);
         }
 
         public Task HandleAsync(StatusMessageEvent message, CancellationToken cancellationToken)
