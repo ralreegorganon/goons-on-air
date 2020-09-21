@@ -44,6 +44,9 @@
             <Button cm:Message.Attach="SwitchToAddFavoriteMission" ToolTip="Add Mission to Favorites" Focusable="False">
                 <iconPacks:PackIconMaterial Kind="PlaylistPlus" />
             </Button>
+            <Button cm:Message.Attach="SwitchToGenerateRoute" ToolTip="Generate Route" Focusable="False">
+                <iconPacks:PackIconMaterial Kind="MapMarkerPath" />
+            </Button>
         </StackPanel>
         <!--
         <Grid Grid.Row="0" Grid.Column="1" >
