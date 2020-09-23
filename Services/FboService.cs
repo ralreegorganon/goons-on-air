@@ -455,7 +455,7 @@ namespace GoonsOnAir.Services
                         await client.UpdateFBOSellParamsAsync(ap, company.Id, fbo);
                     }
 
-                    if (shouldPurchaseJetFuel && fbo.FuelJetOrderedQuantity == 0 && (fbo.FuelJetCapacity - fbo.FuelJetQuantity) > 0)
+                    if (shouldPurchaseJetFuel && (fbo.FuelJetCapacity - fbo.FuelJetQuantity) > 0)
                     {
                         await client.BuyFuelFromLocalDealerAsync(ap, peopleResponse.Body.GetUserPeopleByCompanyIDResult.Id, fbo.Id, 0, fbo.FuelJetCapacity - fbo.FuelJetQuantity);
                     }
