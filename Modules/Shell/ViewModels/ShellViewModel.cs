@@ -16,34 +16,21 @@ namespace GoonsOnAir.Modules.Shell.ViewModels
 
         public string StatusText { get; set; }
 
-        public DownloadFboMissionsViewModel DownloadFboMissionsViewModel { get; set; }
-        public DownloadFavoritesViewModel DownloadFavoritesViewModel { get; set; }
-        public DownloadPendingViewModel DownloadPendingViewModel { get; set; }
+        public DownloadViewModel DownloadViewModel { get; set; }
         public RefreshFboQueriesViewModel RefreshFboQueriesViewModel { get; set; }
         public AutoAcceptViewModel AutoAcceptViewModel { get; set; }
         public AddFavoriteMissionViewModel AddFavoriteMissionViewModel { get; set; }
         public FboUpgradeViewModel FboUpgradeViewModel { get; set; }
-        public DownloadCashFlowViewModel DownloadCashFlowViewModel { get; set; }
 
         protected override async Task OnActivateAsync(CancellationToken cancellationToken)
         {
             await base.OnActivateAsync(cancellationToken);
-            await SwitchToDownloadFboMissions();
+            await SwitchToDownload();
         }
 
-        public async Task SwitchToDownloadFboMissions()
+        public async Task SwitchToDownload()
         {
-            await ActivateItemAsync(DownloadFboMissionsViewModel, CancellationToken.None);
-        }
-
-        public async Task SwitchToDownloadFavorites()
-        {
-            await ActivateItemAsync(DownloadFavoritesViewModel, CancellationToken.None);
-        }
-
-        public async Task SwitchToDownloadPending()
-        {
-            await ActivateItemAsync(DownloadPendingViewModel, CancellationToken.None);
+            await ActivateItemAsync(DownloadViewModel, CancellationToken.None);
         }
 
         public async Task SwitchToRefreshFboQueries()
@@ -65,11 +52,6 @@ namespace GoonsOnAir.Modules.Shell.ViewModels
         {
             await ActivateItemAsync(FboUpgradeViewModel, CancellationToken.None);
         }
-        public async Task SwitchToDownloadCashFlow()
-        {
-            await ActivateItemAsync(DownloadCashFlowViewModel, CancellationToken.None);
-        }
-
         public Task HandleAsync(StatusMessageEvent message, CancellationToken cancellationToken)
         {
             StatusText = message.Text;

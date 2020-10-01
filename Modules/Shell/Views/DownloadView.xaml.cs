@@ -14,11 +14,11 @@ using System.Windows.Shapes;
 namespace GoonsOnAir.Modules.Shell.Views
 {
     /// <summary>
-    /// Interaction logic for DownloadFavoritesView.xaml
+    /// Interaction logic for DownloadView.xaml
     /// </summary>
-    public partial class DownloadFavoritesView : UserControl
+    public partial class DownloadView : UserControl
     {
-        public DownloadFavoritesView()
+        public DownloadView()
         {
             InitializeComponent();
         }
