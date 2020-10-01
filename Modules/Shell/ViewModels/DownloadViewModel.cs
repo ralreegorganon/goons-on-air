@@ -14,10 +14,12 @@ namespace GoonsOnAir.Modules.Shell.ViewModels
 
         public IFboService FboService { get; set; }
 
-        public bool DownloadCashFlow { get; set; } = true;
-        public bool DownloadPendingMissions { get; set; } = true;
-        public bool DownloadFavoriteMissions { get; set; } = true;
-        public bool DownloadFboMissions { get; set; } = true;
+        public bool DownloadCashFlow { get; set; }
+        public bool DownloadPendingMissions { get; set; }
+        public bool DownloadFavoriteMissions { get; set; }
+        public bool DownloadFboMissions { get; set; }
+        public bool DownloadFboSummary { get; set; }
+
 
         protected override async Task DoTheWork()
         {
@@ -59,6 +61,15 @@ namespace GoonsOnAir.Modules.Shell.ViewModels
                 });
 
                 await FboService.DownloadFboMissions(OutputFolder);
+            }
+
+            if (DownloadFboSummary)
+            {
+                await EventAggregator.PublishOnUIThreadAsync(new StatusMessageEvent {
+                    Text = $"Downloading FBO summary..."
+                });
+
+                await FboService.DownloadFboSummary(OutputFolder);
             }
 
             await EventAggregator.PublishOnUIThreadAsync(new StatusMessageEvent {

@@ -14,6 +14,7 @@ namespace GoonsOnAir.Services
         public Task DownloadFboMissions(string outputFolder);
         public Task DownloadPendingMissions(string outputFolder);
         public Task DownloadFavoriteMissions(string outputFolder);
+        public Task DownloadFboSummary(string outputFolder);
         public Task RefreshFboQueries();
         public Task AcceptMyFavorites();
         public Task AcceptVaFavorites();
@@ -348,6 +349,70 @@ namespace GoonsOnAir.Services
             await package.SaveAsync();
         }
 
+        public async Task DownloadFboSummary(string outputFolder)
+        {
+            var summaryMine = new List<FboSummary>();
+            var summaryVa = new List<FboSummary>();
+
+            await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company, va) => {
+                var airportsResponse = await client.GetAirportsAsync();
+                var airportsLookup = airportsResponse.Body.GetAirportsResult.ToDictionary(k => k.Id, v => v);
+
+                async Task GetFboSummaries(Company c, List<FboSummary> summaries)
+                {
+                    var fbosResponse = await client.GetCompanyFBOsAsync(c.Id);
+
+                    foreach (var fbo in fbosResponse.Body.GetCompanyFBOsResult)
+                    {
+                        var summary = new FboSummary {
+                            FboId = fbo.Id.ToString(),
+                            FboName = fbo.Name,
+                            FboIcao = airportsLookup[fbo.AirportId]
+                                .ICAO,
+                            FuelJetCapacity = fbo.FuelJetCapacity,
+                            FuelJetOrderedCapacity = fbo.FuelJetOrderedCapacity,
+                            FuelJetQuantity = fbo.FuelJetQuantity,
+                            FuelJetOrderedQuantity = fbo.FuelJetOrderedQuantity,
+                            FuelJetConstructionEndDate = fbo.FuelJetConstructionEndDate?.ToString("s"),
+                            FuelJetSellPrice = fbo.FuelJetSellPrice,
+                            AllowFuelJetSelling = fbo.AllowFuelJetSelling
+                        };
+
+                        var ownershipResponse = await client.GetFBOWeeklyOwnershipAsync(ap, c.Id, Guid.Parse(summary.FboId));
+                        summary.WeeklyOwnership = ownershipResponse.Body.GetFBOWeeklyOwnershipResult.Content;
+
+                        summaries.Add(summary);
+                    }
+                }
+
+                await GetFboSummaries(company, summaryMine);
+                await GetFboSummaries(va, summaryVa);
+            });
+
+            var path = Path.Combine(outputFolder, $"FboSummary_{DateTime.Now:yyyy-MM-dd_HH.mm.ss}.xlsx");
+
+            using var package = new ExcelPackage(new FileInfo(path));
+            var worksheet = package.Workbook.Worksheets.Add("FBO Summary (Mine)");
+            worksheet.Cells["A1"].LoadFromCollection(Collection: summaryMine, PrintHeaders: true);
+            using (var rng = worksheet.Cells[worksheet.Dimension.Address])
+            {
+                var table = worksheet.Tables.Add(rng, "FBOSummaryMine");
+                table.TableStyle = TableStyles.Light1;
+            }
+            worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+            worksheet = package.Workbook.Worksheets.Add("FBO Summary (VA)");
+            worksheet.Cells["A1"].LoadFromCollection(Collection: summaryVa, PrintHeaders: true);
+            using (var rng = worksheet.Cells[worksheet.Dimension.Address])
+            {
+                var table = worksheet.Tables.Add(rng, "FBOSummaryVA");
+                table.TableStyle = TableStyles.Light1;
+            }
+            worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+            await package.SaveAsync();
+        }
+
         public async Task RefreshFboQueries()
         {
             await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company, va) => {
@@ -594,5 +659,20 @@ namespace GoonsOnAir.Services
         public double? LegHeading { get; set; }
         public double? LegDistance { get; set; }
         public string LegAircraft { get; set; }
+    }
+
+    public class FboSummary
+    {
+        public string FboId { get; set; }
+        public string FboName { get; set; }
+        public string FboIcao { get; set; }
+        public decimal WeeklyOwnership { get; set; }
+        public double FuelJetCapacity { get; set; }
+        public double FuelJetOrderedCapacity { get; set; }
+        public double FuelJetQuantity { get; set; }
+        public double FuelJetOrderedQuantity { get; set; }
+        public string? FuelJetConstructionEndDate { get; set; }
+        public decimal FuelJetSellPrice { get; set; }
+        public bool AllowFuelJetSelling { get; set; }
     }
 }

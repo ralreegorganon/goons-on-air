@@ -29,10 +29,11 @@
             <Button x:Name="BrowseOutput" DockPanel.Dock="Right" Width="20"  Content="..."/>
             <TextBox x:Name="OutputFolder" Width="Auto" />
         </DockPanel>
-        <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" x:Name="DownloadCashFlow">Download cash flow</CheckBox>
-        <CheckBox Grid.Row="4" Grid.ColumnSpan="2" Margin="5" x:Name="DownloadPendingMissions">Download pending missions</CheckBox>
-        <CheckBox Grid.Row="5" Grid.ColumnSpan="2" Margin="5" x:Name="DownloadFavoriteMissions">Download favorite missions</CheckBox>
-        <CheckBox Grid.Row="7" Grid.ColumnSpan="2" Margin="5" x:Name="DownloadFboMissions">Download FBO missions</CheckBox>
+        <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" x:Name="DownloadCashFlow">Cash flow</CheckBox>
+        <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" x:Name="DownloadPendingMissions">Pending missions</CheckBox>
+        <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" x:Name="DownloadFavoriteMissions">Favorite missions</CheckBox>
+        <CheckBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" x:Name="DownloadFboMissions">FBO missions</CheckBox>
+        <CheckBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" x:Name="DownloadFboSummary">FBO summary</CheckBox>
         <Button Grid.Row="8" Grid.Column="1" x:Name="Run" Content="Download" HorizontalAlignment="Right" Width="100"  />
     </Grid>
 </UserControl>
