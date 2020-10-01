@@ -2,7 +2,7 @@
 using System.IO;
 using Caliburn.Micro;
 using Newtonsoft.Json;
-using ServiceReference2;
+using OnAir.Client.OnAirServiceReference;
 
 namespace GoonsOnAir
 {

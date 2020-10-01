@@ -2,8 +2,7 @@
 using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
-using ServiceReference2;
-using AccessParams = ServiceReference2.AccessParams;
+using OnAir.Client.OnAirServiceReference;
 
 namespace GoonsOnAir
 {

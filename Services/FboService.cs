@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using OfficeOpenXml;
 using OfficeOpenXml.Table;
-using ServiceReference2;
+using OnAir.Client.OnAirServiceReference;
 
 namespace GoonsOnAir.Services
 {
@@ -48,10 +48,10 @@ namespace GoonsOnAir.Services
                             if (currentMissions.Count == 0)
                             {
                                 missions.Add(new FboMission {
-                                    FboId = fbo.Id,
+                                    FboId = fbo.Id.ToString(),
                                     FboName = fbo.Name,
                                     FboIcao = airportsLookup[fbo.AirportId].ICAO,
-                                    QueryId = q.Id,
+                                    QueryId = q.Id.ToString(),
                                     QueryOrder = q.Order,
                                     QueryDirection = q.Heading,
                                     QueryMinRange = q.MinRange,
@@ -73,10 +73,10 @@ namespace GoonsOnAir.Services
                                 foreach (var cargo in m.Cargos)
                                 {
                                     missions.Add(new FboMission {
-                                        FboId = fbo.Id,
+                                        FboId = fbo.Id.ToString(),
                                         FboName = fbo.Name,
                                         FboIcao = airportsLookup[fbo.AirportId].ICAO,
-                                        QueryId = q.Id,
+                                        QueryId = q.Id.ToString(),
                                         QueryOrder = q.Order,
                                         QueryDirection = q.Heading,
                                         QueryMinRange = q.MinRange,
@@ -89,7 +89,7 @@ namespace GoonsOnAir.Services
                                         QueryCanGenerateMissions = q.CanGenerateMissions,
                                         QueryNextRequest = q.NextRequest?.ToString("s"),
                                         QueryNextRequestDelta = $"{Math.Round((q.NextRequest - DateTime.UtcNow).Value.TotalHours)} hours",
-                                        MissionId = m.Id,
+                                        MissionId = m.Id.ToString(),
                                         MissionMainAirport = airportsLookup[m.MainAirportId].ICAO,
                                         MissionMainAirportHeading = m.MainAirportHeading,
                                         MissionTotalDistance = m.TotalDistance,
@@ -111,10 +111,10 @@ namespace GoonsOnAir.Services
                                 foreach (var charter in m.Charters)
                                 {
                                     missions.Add(new FboMission {
-                                        FboId = fbo.Id,
+                                        FboId = fbo.Id.ToString(),
                                         FboName = fbo.Name,
                                         FboIcao = airportsLookup[fbo.AirportId].ICAO,
-                                        QueryId = q.Id,
+                                        QueryId = q.Id.ToString(),
                                         QueryOrder = q.Order,
                                         QueryDirection = q.Heading,
                                         QueryMinRange = q.MinRange,
@@ -127,7 +127,7 @@ namespace GoonsOnAir.Services
                                         QueryCanGenerateMissions = q.CanGenerateMissions,
                                         QueryNextRequest = q.NextRequest?.ToString("s"),
                                         QueryNextRequestDelta = $"{Math.Round((q.NextRequest - DateTime.UtcNow).Value.TotalHours)} hours",
-                                        MissionId = m.Id,
+                                        MissionId = m.Id.ToString(),
                                         MissionMainAirport = airportsLookup[m.MainAirportId].ICAO,
                                         MissionMainAirportHeading = m.MainAirportHeading,
                                         MissionTotalDistance = m.TotalDistance,
@@ -197,7 +197,7 @@ namespace GoonsOnAir.Services
                     foreach (var cargo in m.Cargos)
                     {
                         missions.Add(new Mission {
-                            MissionId = m.Id,
+                            MissionId = m.Id.ToString(),
                             MissionMainAirport = airportsLookup[m.MainAirportId].ICAO,
                             MissionMainAirportHeading = m.MainAirportHeading,
                             MissionTotalDistance = m.TotalDistance,
@@ -219,7 +219,7 @@ namespace GoonsOnAir.Services
                     foreach (var charter in m.Charters)
                     {
                         missions.Add(new Mission {
-                            MissionId = m.Id,
+                            MissionId = m.Id.ToString(),
                             MissionMainAirport = airportsLookup[m.MainAirportId].ICAO,
                             MissionMainAirportHeading = m.MainAirportHeading,
                             MissionTotalDistance = m.TotalDistance,
@@ -273,7 +273,7 @@ namespace GoonsOnAir.Services
                         foreach (var cargo in m.Cargos)
                         {
                             missions.Add(new Mission {
-                                MissionId = m.Id,
+                                MissionId = m.Id.ToString(),
                                 MissionMainAirport = airportsLookup[m.MainAirportId]
                                     .ICAO,
                                 MissionMainAirportHeading = m.MainAirportHeading,
@@ -297,7 +297,7 @@ namespace GoonsOnAir.Services
                         foreach (var charter in m.Charters)
                         {
                             missions.Add(new Mission {
-                                MissionId = m.Id,
+                                MissionId = m.Id.ToString(),
                                 MissionMainAirport = airportsLookup[m.MainAirportId]
                                     .ICAO,
                                 MissionMainAirportHeading = m.MainAirportHeading,
@@ -412,14 +412,14 @@ namespace GoonsOnAir.Services
         public async Task FavoriteMissionForMyCompany(string missionId)
         {
             await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company, va) => {
-                await client.FavoritesAddAsync(ap, company.Id, missionId);
+                await client.FavoritesAddAsync(ap, company.Id, Guid.Parse(missionId));
             });
         }
 
         public async Task FavoriteMissionForVa(string missionId)
         {
             await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company, va) => {
-                await client.FavoritesAddAsync(ap,  va.Id, missionId);
+                await client.FavoritesAddAsync(ap,  va.Id, Guid.Parse(missionId));
             });
         }
 

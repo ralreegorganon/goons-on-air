@@ -27,4 +27,14 @@
     <WCFMetadata Include="Connected Services" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Connected Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="OnAir Company">
+      <HintPath>OnAir Company.exe</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
