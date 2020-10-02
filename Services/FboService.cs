@@ -199,6 +199,7 @@ namespace GoonsOnAir.Services
                     {
                         missions.Add(new Mission {
                             MissionId = m.Id.ToString(),
+                            Owner = m.CompanyId == company.Id ? "Me" : "VA",
                             MissionMainAirport = airportsLookup[m.MainAirportId].ICAO,
                             MissionMainAirportHeading = m.MainAirportHeading,
                             MissionTotalDistance = m.TotalDistance,
@@ -221,6 +222,7 @@ namespace GoonsOnAir.Services
                     {
                         missions.Add(new Mission {
                             MissionId = m.Id.ToString(),
+                            Owner = m.CompanyId == company.Id ? "Me" : "VA",
                             MissionMainAirport = airportsLookup[m.MainAirportId].ICAO,
                             MissionMainAirportHeading = m.MainAirportHeading,
                             MissionTotalDistance = m.TotalDistance,
@@ -604,6 +606,7 @@ namespace GoonsOnAir.Services
     public class Mission
     {
         public string MissionId { get; set; }
+        public string Owner { get; set; }
         public string MissionMainAirport { get; set; }
         public double? MissionMainAirportHeading { get; set; }
         public double? MissionTotalDistance { get; set; }
