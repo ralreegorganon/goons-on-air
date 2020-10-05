@@ -324,7 +324,14 @@ namespace GoonsOnAir.Services
                 }
 
                 await GetFavorites(company, missionsMine);
-                await GetFavorites(va, missionsVa);
+                try
+                {
+                    await GetFavorites(va, missionsVa);
+                } catch
+                {
+                    //I'm not allowed to get the VA's favorites at my VA rank, which throws an exception and fails the overall task
+                    //If we just catch and ignore that problem, does the overall task still work (should end up with an empty list?).
+                }
             });
 
             var path = Path.Combine(outputFolder, $"FavoriteMissions_{DateTime.Now:yyyy-MM-dd_HH.mm.ss}.xlsx");
@@ -388,7 +395,16 @@ namespace GoonsOnAir.Services
                 }
 
                 await GetFboSummaries(company, summaryMine);
-                await GetFboSummaries(va, summaryVa);
+                try
+                {
+                    await GetFboSummaries(va, summaryVa);
+                }
+                catch
+                {
+                    //I'm not allowed to get the VA's favorites at my VA rank, which throws an exception and fails the overall task
+                    //If we just catch and ignore that problem, does the overall task still work (should end up with an empty list?).
+                }
+
             });
 
             var path = Path.Combine(outputFolder, $"FboSummary_{DateTime.Now:yyyy-MM-dd_HH.mm.ss}.xlsx");
@@ -547,14 +563,6 @@ namespace GoonsOnAir.Services
                     })
                     .ToList();
 
-                var cashFlowResponseVa = await client.AccountGetCompanyCashFlowAsync(ap, va.Id);
-                var flowVa = cashFlowResponse.Body.AccountGetCompanyCashFlowResult.Entries.Select(x => new {
-                        Timestamp = x.CreationDate.ToString("s"),
-                        x.Description,
-                        x.Amount
-                    })
-                    .ToList();
-
                 var path = Path.Combine(outputFolder, $"CashFlow_{DateTime.Now:yyyy-MM-dd_HH.mm.ss}.xlsx");
 
                 using var package = new ExcelPackage(new FileInfo(path));
@@ -567,14 +575,31 @@ namespace GoonsOnAir.Services
                 }
                 worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
 
-                worksheet = package.Workbook.Worksheets.Add("Cash Flow (VA)");
-                worksheet.Cells["A1"].LoadFromCollection(Collection: flowVa, PrintHeaders: true);
-                using (var rng = worksheet.Cells[worksheet.Dimension.Address])
+                try
                 {
-                    var table = worksheet.Tables.Add(rng, "CashFlowVA");
-                    table.TableStyle = TableStyles.Light1;
+                    var cashFlowResponseVa = await client.AccountGetCompanyCashFlowAsync(ap, va.Id);
+                    var flowVa = cashFlowResponse.Body.AccountGetCompanyCashFlowResult.Entries.Select(x => new
+                    {
+                        Timestamp = x.CreationDate.ToString("s"),
+                        x.Description,
+                        x.Amount
+                    })
+                        .ToList();
+
+                    worksheet = package.Workbook.Worksheets.Add("Cash Flow (VA)");
+                    worksheet.Cells["A1"].LoadFromCollection(Collection: flowVa, PrintHeaders: true);
+                    using (var rng = worksheet.Cells[worksheet.Dimension.Address])
+                    {
+                        var table = worksheet.Tables.Add(rng, "CashFlowVA");
+                        table.TableStyle = TableStyles.Light1;
+                    }
+                    worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
                 }
-                worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+                catch
+                {
+                    //Fail silently because we're not a VA fancy lad
+                }
+
 
                 await package.SaveAsync();
             });
