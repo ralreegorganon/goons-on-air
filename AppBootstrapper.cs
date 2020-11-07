@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
@@ -31,6 +30,10 @@ namespace GoonsOnAir
 
             builder.RegisterType<GlobalCredentials>()
                 .AsSelf()
+                .SingleInstance();
+
+            builder.RegisterType<OnAirClient>()
+                .AsImplementedInterfaces()
                 .SingleInstance();
 
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;

@@ -28,6 +28,8 @@ namespace GoonsOnAir.Services
     {
         public GlobalCredentials GlobalCredentials { get; set; }
 
+        public IOnAirClient OnAirClient { get; set; }
+
         public async Task DownloadFboMissions(string outputFolder)
         {
             var missions = new List<FboMission>();
@@ -418,8 +420,14 @@ namespace GoonsOnAir.Services
         public async Task RefreshFboQueries()
         {
             await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company, va) => {
-                var favoriteResponse = await client.FavoritesGetMissionsAsync(ap, va.Id);
-                var companyFavorites = favoriteResponse.Body.FavoritesGetMissionsResult.Select(x => x.Id);
+                var companyFavorites = new List<Guid>();
+
+                if (va != null)
+                {
+                    var favoriteResponse = await client.FavoritesGetMissionsAsync(ap, va.Id);
+                    companyFavorites = favoriteResponse.Body.FavoritesGetMissionsResult.Select(x => x.Id)
+                        .ToList();
+                }
 
                 var companyFbOsResponse = await client.GetCompanyFBOsAsync(company.Id);
                 foreach (var fbo in companyFbOsResponse.Body.GetCompanyFBOsResult)
@@ -538,6 +546,8 @@ namespace GoonsOnAir.Services
 
         public async Task DownloadCashFlow(string outputFolder)
         {
+            var path = Path.Combine(outputFolder, $"CashFlow_{DateTime.Now:yyyy-MM-dd_HH.mm.ss}.xlsx");
+
             await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company, va) => {
                 var cashFlowResponse = await client.AccountGetCompanyCashFlowAsync(ap, company.Id);
                 var flow = cashFlowResponse.Body.AccountGetCompanyCashFlowResult.Entries.Select(x => new {
@@ -546,16 +556,6 @@ namespace GoonsOnAir.Services
                         x.Amount
                     })
                     .ToList();
-
-                var cashFlowResponseVa = await client.AccountGetCompanyCashFlowAsync(ap, va.Id);
-                var flowVa = cashFlowResponse.Body.AccountGetCompanyCashFlowResult.Entries.Select(x => new {
-                        Timestamp = x.CreationDate.ToString("s"),
-                        x.Description,
-                        x.Amount
-                    })
-                    .ToList();
-
-                var path = Path.Combine(outputFolder, $"CashFlow_{DateTime.Now:yyyy-MM-dd_HH.mm.ss}.xlsx");
 
                 using var package = new ExcelPackage(new FileInfo(path));
                 var worksheet = package.Workbook.Worksheets.Add("Cash Flow (Mine)");
@@ -567,14 +567,25 @@ namespace GoonsOnAir.Services
                 }
                 worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
 
-                worksheet = package.Workbook.Worksheets.Add("Cash Flow (VA)");
-                worksheet.Cells["A1"].LoadFromCollection(Collection: flowVa, PrintHeaders: true);
-                using (var rng = worksheet.Cells[worksheet.Dimension.Address])
+                if (va != null)
                 {
-                    var table = worksheet.Tables.Add(rng, "CashFlowVA");
-                    table.TableStyle = TableStyles.Light1;
+                    var cashFlowResponseVa = await client.AccountGetCompanyCashFlowAsync(ap, va.Id);
+                    var flowVa = cashFlowResponseVa.Body.AccountGetCompanyCashFlowResult.Entries.Select(x => new {
+                            Timestamp = x.CreationDate.ToString("s"),
+                            x.Description,
+                            x.Amount
+                        })
+                        .ToList();
+
+                    worksheet = package.Workbook.Worksheets.Add("Cash Flow (VA)");
+                    worksheet.Cells["A1"].LoadFromCollection(Collection: flowVa, PrintHeaders: true);
+                    using (var rng = worksheet.Cells[worksheet.Dimension.Address])
+                    {
+                        var table = worksheet.Tables.Add(rng, "CashFlowVA");
+                        table.TableStyle = TableStyles.Light1;
+                    }
+                    worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
                 }
-                worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
 
                 await package.SaveAsync();
             });
