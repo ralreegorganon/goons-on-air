@@ -457,13 +457,12 @@ namespace GoonsOnAir.Services
         public async Task AcceptMyFavorites()
         {
             await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company, va) => {
-                var peopleResponse = await client.GetUserPeopleByCompanyIDAsync(ap, company.Id);
                 var favoriteResponse = await client.FavoritesGetMissionsAsync(ap, company.Id);
                 foreach (var m in favoriteResponse.Body.FavoritesGetMissionsResult)
                 {
                     if ((m.ExpirationDate - DateTime.UtcNow).Value.TotalMinutes < 22 && m.ExpirationDate > DateTime.UtcNow)
                     {
-                        await client.AcceptMissionAsync(ap, peopleResponse.Body.GetUserPeopleByCompanyIDResult.Id, company.Id, m.Id);
+                        await client.AcceptMissionAsync(ap, company.Id, m);
                     }
                 }
             });
@@ -472,13 +471,12 @@ namespace GoonsOnAir.Services
         public async Task AcceptVaFavorites()
         {
             await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company, va) => {
-                var peopleResponse = await client.GetUserPeopleByCompanyIDAsync(ap, va.Id);
                 var favoriteResponse = await client.FavoritesGetMissionsAsync(ap, va.Id);
                 foreach (var m in favoriteResponse.Body.FavoritesGetMissionsResult)
                 {
                     if ((m.ExpirationDate - DateTime.UtcNow).Value.TotalMinutes < 22 && m.ExpirationDate > DateTime.UtcNow)
                     {
-                        await client.AcceptMissionAsync(ap, peopleResponse.Body.GetUserPeopleByCompanyIDResult.Id, va.Id, m.Id);
+                        await client.AcceptMissionAsync(ap, va.Id, m);
                     }
                 }
             });
@@ -487,14 +485,16 @@ namespace GoonsOnAir.Services
         public async Task FavoriteMissionForMyCompany(string missionId)
         {
             await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company, va) => {
-                await client.FavoritesAddAsync(ap, company.Id, Guid.Parse(missionId));
+                var response = await client.GetMissionByIDAsync(Guid.Parse(missionId));
+                await client.FavoritesAddAsync(ap, company.Id, response.Body.GetMissionByIDResult);
             });
         }
 
         public async Task FavoriteMissionForVa(string missionId)
         {
             await OnAirClient.RunInOnAirScope(GlobalCredentials.AccessParams, async (client, ap, company, va) => {
-                await client.FavoritesAddAsync(ap,  va.Id, Guid.Parse(missionId));
+                var response = await client.GetMissionByIDAsync(Guid.Parse(missionId));
+                await client.FavoritesAddAsync(ap,  va.Id, response.Body.GetMissionByIDResult);
             });
         }
 
